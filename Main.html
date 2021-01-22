@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<style>
+  .mainDiv{
+    margin-left: 3%;
+    margin-top: 1%;
+  }
+  .body{
+    font-family: sans-serif;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .saveBtn{
+    padding: 0.75rem;
+    background: #37af65;
+    color: white;
+    border-radius: 2px;
+    cursor: pointer;
+    margin-top: 1%;
+  }
+  .form-group{
+    margin-top: 1%;
+  }
+  .input{
+    display: block;
+  }
+
+</style>
+
+<body class="body">
+
+<div class="mainDiv">
+  <h1>STUDENT DETAIL FORM</h1>
+
+  <form>
+
+    <div class="form-group">
+      <span><label class="stdIDD"><b>Student ID:</b></label><label>id="stdID"</label></span>
+      <input class="input" type="number" placeholder="Enter Student ID" required>
+    </div>
+
+    <div class="form-group">
+      <span><label class="stdNamee"><b>Student Name:</b></label><label>id="stdName"</label></span>
+      <input class="input" type="text" placeholder="Enter Student Name" required>
+    </div>
+
+    <div class="form-group">
+      <span><label class="email"><b>Email:</b></label><label>id="email"</label></span>
+      <input class="input" type="email" placeholder="Enter Email" required>
+    </div>
+
+    <input class ="btn btn-primary" id="saveBtn" type="button" value="Save" onclick="saveStudent()">
+
+  </form>
+</div>
+<script>
+  function getFormData(){
+    var stdId=$("#stdID").val();
+    if(stdId===""){
+      alert("Stsudent id equired value");
+      $("#stdID").focus();
+      return "";
+    }
+    var stdNAME=$("#stdName").val();
+    if(stdNAME===""){
+      alert("Student name required value");
+      $("#stdName").focus();
+      return "";
+    }
+    var emailL=$("#email").val();
+    if(emailL===""){
+      alert("Student email required value");
+      $("#email").focus();
+      return "";
+    }
+    var jsonStrObj={
+      stdID:stdId,
+      stdName:stdNAME,
+      emailL:email,
+
+    };
+    return JSON.stringify(jsonStrObj);
+  }
+  function saveStudent(){
+    var jsonStr=getFormData();
+    if(jsonStr ===""){
+      return;
+    }
+    var putReqStr=createPUTRequest("90937133|-31948799781429646|90931292",jsonStr,"StudentPortal","Student-Deatils");
+
+    alert(putReqStr);
+    jQuery.ajaxSetup({async:false});
+    var resultObj=executeCommand(putReqStr,"http://api.login2explore.com:5577","/api/iml");
+    jQuery.ajaxSetup({async:true});
+
+    alert(JSON.stringify(resultObj));
+
+    resetForm();
+  }
+  function resetform(){
+    $("#stdID").val("");
+    $("#stdName").val("");
+    $("#email").val("");
+    $("#stdID").focus();
+
+  }
+  function createPUTRequest(connToken, jsonObj, dbName, relName) {
+    var putRequest = "{\n"
+      + "\"token\" : \""
+      + connToken
+      + "\","
+      + "\"dbName\": \""
+      + dbName
+      + "\",\n" + "\"cmd\" : \"PUT\",\n"
+      + "\"rel\" : \""
+      + relName + "\","
+      + "\"jsonStr\": \n"
+      + jsonObj
+      + "\n"
+      + "}";
+    return putRequest;
+  }
+
+  function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+    var url = dbBaseUrl + apiEndPointUrl;
+    var jsonObj;
+    $.post(url, reqString, function (result) {
+      jsonObj = JSON.parse(result);
+    }).fail(function (result) {
+      var dataJsonObj = result.responseText;
+      jsonObj = JSON.parse(dataJsonObj);
+    });
+    return jsonObj;
+  }
+</script>
+
+</body>
+</html>
